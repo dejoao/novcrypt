@@ -34,7 +34,34 @@ char* new_senha(void){
     return hash; // Retorna o hash gerado
 }
 
-void login(void){
+int validador_login(sqlite3 *db, const char *email, const char *senha){
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT hash FROM autenticacao WHERE email = ?;";
+   
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar consulta: %s\n", sqlite3_errmsg(db));
+        return 0;
+    }
+
+    sqlite3_bind_text(stmt, 1, email, -1, SQLITE_STATIC);
+
+    //query
+    int resultado = 0;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        // Recuperar o hash armazenado no banco de dados
+        const char *senha_db = (const char *)sqlite3_column_text(stmt, 0);
+
+        // Comparar a senha digitada com o hash armazenado
+        if (crypto_pwhash_str_verify(senha_db, senha, strlen(senha)) == 0) {
+            resultado = 1;  // Senha correta
+        }
+    }
+
+    sqlite3_finalize(stmt);
+    return resultado;
+}
+
+int login(void){
 
     // Pegar email
     printf("Faça login\n\nEmail: ");
@@ -44,13 +71,24 @@ void login(void){
     // Pegar senha usar hash
     printf("Senha: ");
     char *hash = new_senha();
-    printf("%s", hash);
+    //printf("%s", hash);
 
     // Fazer consulta no banco de dados
-    
-    // retorna 0 se estiver dados certos e existe no banco de dados
-    // senao fazer cadastro
+    sqlite3 *db;
+    if (sqlite3_open("auth.db", &db) != SQLITE_OK) {
+        fprintf(stderr, "Erro ao abrir o banco de dados: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+
+    if (validador_login(db, email, hash)) {
+        printf("Usuário autenticado com sucesso!\n");
+    } else {
+        printf("Falha na autenticação. Email ou senha incorretos.\n");
+    }
     //Logado com sucesso mandar para tela inicial
+    sqlite3_close(db);
+    free(hash);
+    return 0;
 }
 
 void cadastro(void){
