@@ -1,7 +1,5 @@
 #include "config.h"
 
-#define TAMANHO_ALFABETO 26
-
 char *chave(void)
 {
     srand(time(NULL)); //usado para gerar um numero aleatorio com base no horario
