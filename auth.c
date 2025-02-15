@@ -46,19 +46,19 @@ int validador_login(sqlite3 *db, const char *email, const char *senha){
     sqlite3_bind_text(stmt, 1, email, -1, SQLITE_STATIC);
 
     //query
-    int resultado = 0;
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         // Recuperar o hash armazenado no banco de dados
         const char *senha_db = (const char *)sqlite3_column_text(stmt, 0);
 
         // Comparar a senha digitada com o hash armazenado
         if (crypto_pwhash_str_verify(senha_db, senha, strlen(senha)) == 0) {
-            resultado = 1;  // Senha correta
+            sqlite3_finalize(stmt);
+            return 1;  // Senha correta
         }
     }
 
     sqlite3_finalize(stmt);
-    return resultado;
+    return 0;
 }
 
 int login(void){
@@ -81,11 +81,12 @@ int login(void){
     }
 
     if (validador_login(db, email, hash)) {
-        printf("Usuário autenticado com sucesso!\n");
+        printf("Usuário autenticado com sucesso!\n"); //Logado com sucesso mandar para tela inicial
+        home();
     } else {
         printf("Falha na autenticação. Email ou senha incorretos.\n");
     }
-    //Logado com sucesso mandar para tela inicial
+    
     sqlite3_close(db);
     free(hash);
     return 0;

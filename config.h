@@ -16,6 +16,7 @@
 char *criptografia_substituicao (char *key, char *texto);
 char* descriptografar_substituicao (char *key, char *texto_criptografado);
 int menu(void);
-char* get_string(void);
+char* get_string();
+int home();
 
 #endif

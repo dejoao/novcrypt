@@ -19,41 +19,35 @@ char *chave(void)
     return chave;
 }
 
-char* get_string(void){
-    
-    size_t tamanho = 10, indice = 0;
-    char *texto = malloc(tamanho * sizeof(char));
-    //verificacao
-    if(texto == NULL)
-    {
-        printf("alocação de memoria falhou \n");
-        return NULL;
-    }
-    int caractere;
+char* get_string()
+{
+    char *entrada = NULL;
+    size_t tamanho = 0;
+    size_t caracteres_lidos;
 
-    while ((caractere = getchar()) != '\n' && caractere != EOF);    
-    while((caractere = getchar()) != '\n' && caractere != EOF)
-    {
-        if (indice + 1 >= tamanho)
-        {
-            tamanho *= 2;
-            char *buffer_novo = realloc(texto, tamanho);
-            //verificacao
-            if(buffer_novo == NULL)
-            {
-                printf("alocação de memoria falhou \n");
-                return NULL;
-            }
-            texto = buffer_novo;
+    //limpa buffer
+    if (stdin->_IO_read_ptr < stdin->_IO_read_end) { // Apenas no GNU C
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+
+    caracteres_lidos = getline(&entrada, &tamanho, stdin);
+
+    if (caracteres_lidos != -1) {
+        // Removendo o '\n' do final, se presente
+        if (entrada[caracteres_lidos - 1] == '\n') {
+            entrada[caracteres_lidos - 1] = '\0';
         }
-        texto[indice++] = caractere;
+    } else {
+        free(entrada);
+        printf("Erro ao ler a entrada.\n");
     }
-    texto[indice] = '\0';
 
-    return texto;
+    return entrada;
 }
 
-char* get_key(void){
+char* get_key(void)
+{
 
     char key[TAMANHO_ALFABETO + 1];  // Buffer temporário para leitura
     scanf("%s", key);
@@ -87,6 +81,11 @@ char* get_key(void){
     }
     strcpy(result, key);
     return result;
+}
+
+int home()
+{
+    
 }
 
 int main(int argc, char *argv[])
