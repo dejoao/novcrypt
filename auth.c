@@ -82,7 +82,6 @@ int login(void){
 
     if (validador_login(db, email, hash)) {
         printf("Usuário autenticado com sucesso!\n"); //Logado com sucesso mandar para tela inicial
-        home();
     } else {
         printf("Falha na autenticação. Email ou senha incorretos.\n");
     }
@@ -92,23 +91,55 @@ int login(void){
     return 0;
 }
 
-void cadastro(void){
+int insert_sql(sqlite3 *db, const char *email, const char *senha){
+    char *errMsg = 0;
+    sqlite3_stmt *stmt;
 
+    char *sql = "INSERT INTO auth (email, hash) VALUES (?, ?);";
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+
+    if(rc == SQLITE_OK){
+        sqlite3_bind_text(stmt, 1, email, -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, senha, -1, SQLITE_STATIC);
+    }else{
+        fprintf(stderr, "Falha ao executar funcao %s\n", sqlite3_errmsg(db));
+    }
+
+    int step = sqlite3_step(stmt);
+
+    sqlite3_finalize(stmt);
+    return 1;
+}
+
+int cadastro(void){
     //Pegar email 
     printf("\nCrie sua conta\n\nEmail: ");
     char *email = get_string();
     //fazer verificacao email valido
 
-    //guardar no banco de dados
-
     //Pegar senha //Fazer Hash
     printf("Senha: ");
-    char *senha_hash = new_senha();
+    char *senhaHash = new_senha();
     
     //Guardar no banco de dados
-    //Criado com sucesso
-    //Mandar para o login
+    sqlite3 *db;
 
+    if(sqlite3_open("auth.db", &db) != SQLITE_OK){
+        fprintf(stderr, "Erro ao abrir o banco de dados: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+    
+    if(insert_sql(db, email, senhaHash)){
+        printf("Cadastro criado com sucesso!\n");
+        free(senhaHash);
+        sqlite3_close(db);
+        return 0;
+    }
+    printf("Erro ao criar cadastro!\n");
+    free(senhaHash);
+    sqlite3_close(db);
+    return 0;
+    
 }
 
 int menu(void){
@@ -130,7 +161,7 @@ int menu(void){
             login();
             break;
         case 2:
-            //funcao cadasstro
+            //funcao cadastro
             cadastro();
             break;
         case 3:

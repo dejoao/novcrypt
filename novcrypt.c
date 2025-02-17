@@ -85,7 +85,7 @@ char* get_key(void)
 
 int home()
 {
-    
+    return 0;
 }
 
 int main(int argc, char *argv[])
