@@ -49,15 +49,15 @@ int validador_login(sqlite3 *db, const char *email, const char *senha){
         // Recuperar o hash armazenado no banco de dados
         const char *senha_db = (const char *)sqlite3_column_text(stmt, 0);
 
-        // Comparar a senha digitada com o hash armazenado
+        // Comparar a senha digitada com o hash armazenado Funcao crypto_pwhash_str_verify()
         if (crypto_pwhash_str_verify(senha_db, senha, strlen(senha)) == 0) {
             sqlite3_finalize(stmt);
-            return 1;  // Senha correta
+            return 0;  // Senha correta
         }
     }
 
     sqlite3_finalize(stmt);
-    return 0;
+    return 1;
 }
 
 int login(void){
@@ -70,7 +70,7 @@ int login(void){
     // Pegar senha usar hash // Nao esta dando certo porque nao posso criar um novo hash, 
     // a libsodium tem uma funcao para comparar as senhas
     printf("Senha: ");
-    char *hash = new_senha();
+    char *senha = get_string();
     //printf("%s", hash);
 
     // Fazer consulta no banco de dados
@@ -80,15 +80,17 @@ int login(void){
         return 1;
     }
 
-    if (validador_login(db, email, hash)) {
+    if (validador_login(db, email, senha) == 0) {
         printf("Usuário autenticado com sucesso!\n"); //Logado com sucesso mandar para tela inicial
+        sqlite3_close(db);
+        free(senha);
+        return 0;
     } else {
         printf("Falha na autenticação. Email ou senha incorretos.\n");
+        sqlite3_close(db);
+        free(senha);
+        return 1;
     }
-    
-    sqlite3_close(db);
-    free(hash);
-    return 0;
 }
 
 int insert_sql(sqlite3 *db, const char *email, const char *senha){
