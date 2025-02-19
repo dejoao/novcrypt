@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h> //usado na funcao chave
+#include <time.h> //usado na funcao chave
+#include <string.h>
+#include <ctype.h>
 #include "config.h"
 
 char *criptografia_substituicao (char *key, char *texto)
@@ -18,7 +23,6 @@ char *criptografia_substituicao (char *key, char *texto)
     }
     return textoCriptografado;
 }
-
 char* descriptografar_substituicao (char *key, char *texto_criptografado)
 {
    const char alfabeto[] = "abcdefghijklmnopqrstuvwxyz";
