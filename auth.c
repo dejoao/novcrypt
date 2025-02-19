@@ -1,7 +1,6 @@
 #include "config.h"
 
 char* new_senha(void){
-    
     //iniciar biblioteca
     if (sodium_init() < 0) {
         printf("Erro ao inicializar a biblioteca libsodium.\n");
@@ -68,7 +67,8 @@ int login(void){
     char *email = get_string();
     //fazer verificacao email valido
 
-    // Pegar senha usar hash
+    // Pegar senha usar hash // Nao esta dando certo porque nao posso criar um novo hash, 
+    // a libsodium tem uma funcao para comparar as senhas
     printf("Senha: ");
     char *hash = new_senha();
     //printf("%s", hash);
@@ -92,50 +92,71 @@ int login(void){
 }
 
 int insert_sql(sqlite3 *db, const char *email, const char *senha){
-    char *errMsg = 0;
     sqlite3_stmt *stmt;
-
-    char *sql = "INSERT INTO auth (email, hash) VALUES (?, ?);";
+    const char *sql = "INSERT INTO autenticacao (email, hash) VALUES (?, ?);";
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
-    if(rc == SQLITE_OK){
-        sqlite3_bind_text(stmt, 1, email, -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 1, senha, -1, SQLITE_STATIC);
-    }else{
-        fprintf(stderr, "Falha ao executar funcao %s\n", sqlite3_errmsg(db));
+    // verifica se a consulta foi preparada com sucesso
+    if(rc != SQLITE_OK){
+        fprintf(stderr, "Erro ao preparar SQL: %s\n", sqlite3_errmsg(db));
+        return 1;
     }
 
+    // insere dinamicamente os dados na consulta (?, ?)
+    sqlite3_bind_text(stmt, 1, email, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, senha, -1, SQLITE_TRANSIENT);
+
+    // executa a consulta
     int step = sqlite3_step(stmt);
+    // verifica se a consulta foi executada com sucesso
+    if(step == SQLITE_CONSTRAINT){
+        sqlite3_finalize(stmt); 
+        return 2; // se o email ja existe
+    }
+    if (step != SQLITE_DONE) {
+        fprintf(stderr, "Erro ao inserir no banco: %s\n", sqlite3_errmsg(db));
+        sqlite3_finalize(stmt);
+        return 1;
+    }
 
     sqlite3_finalize(stmt);
-    return 1;
+    return 0;
+
 }
 
 int cadastro(void){
-    //Pegar email 
+    // Solicita o email 
     printf("\nCrie sua conta\n\nEmail: ");
     char *email = get_string();
-    //fazer verificacao email valido
 
-    //Pegar senha //Fazer Hash
+    // Solicita a senha e faz o hash
     printf("Senha: ");
     char *senhaHash = new_senha();
     
-    //Guardar no banco de dados
+    // Ponteiro para o banco de dados
     sqlite3 *db;
 
+    // Abre o banco de dados e verifica erros
     if(sqlite3_open("auth.db", &db) != SQLITE_OK){
         fprintf(stderr, "Erro ao abrir o banco de dados: %s\n", sqlite3_errmsg(db));
         return 1;
     }
     
-    if(insert_sql(db, email, senhaHash)){
-        printf("Cadastro criado com sucesso!\n");
+    // Insere os dados no banco de dados e verifica erros
+    int retornoIsert = insert_sql(db, email, senhaHash);
+    if(retornoIsert == 1){
+        printf("Erro ao criar cadastro!\n");
         free(senhaHash);
         sqlite3_close(db);
-        return 0;
-    }
-    printf("Erro ao criar cadastro!\n");
+        return 1;        
+    }else if(retornoIsert == 2){
+        printf("Esse email ja existe: Insira outro\n"); // se retorna 2 email existente
+        free(senhaHash);
+        sqlite3_close(db);
+        return 1; 
+    } 
+
+    printf("Cadastro criado com sucesso!\n");
     free(senhaHash);
     sqlite3_close(db);
     return 0;
