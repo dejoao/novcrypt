@@ -182,13 +182,14 @@ int menu(void){
         case 1:
             //funcao login
             login();
+            return 1; // login com sucesso
             break;
         case 2:
             //funcao cadastro
             cadastro();
             break;
         case 3:
-            return 1;
+            return 2;
             break;
         default:
             printf("Opção invalida.\n");

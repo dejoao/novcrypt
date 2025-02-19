@@ -19,7 +19,7 @@ char *chave(void)
     return chave;
 }
 
-char* get_string()
+char* get_string(void)
 {
     char *entrada = NULL;
     size_t tamanho = 0;
@@ -83,55 +83,69 @@ char* get_key(void)
     return result;
 }
 
-int home()
+int home(void)
 {
+    int opcao;
+    printf("\nESCOLHA OPÇÃO\n");
+    printf("\n1. Criptografar\n2. Descriptografar\n\n");
+    scanf("%d", &opcao);
+
+    switch (opcao){
+        case 1:
+            //funcao cripyt
+            return 1;
+            break;
+        case 2:
+            //funcao descrypt
+            return 2;
+            break;
+        default:
+            printf("Opção invalida.\n");
+    }
+
     return 0;
 }
 
 int main(int argc, char *argv[])
 {
-    // sair do programa, se login retorna 1
-    if(menu() == 1) return 0;
+    // se menu retornar 1 - login feito com sucesso: abre home; 
+    // se retornar 2 sai do programa
+    int opcaoMenu = menu();
+    if(opcaoMenu == 1){
+        //se home retornar 1: criptografar; se retornar 2: descriptografar
+        int switchHome = home();
+        if(switchHome == 1)
+        {     
+            char *key = chave();
+            printf("Sua chave é %s\n", key);
 
-    //verificacao uso correto - Isso sai - criar menu para decidir encrypt descrypt
-    /*if(argc != 2)
-    {
-        printf("\nUse: \"novcrypt encrypt\" para criptografar ou \"novcrypt descrypt\" para descriptografar.\n\n");
-        return 2;
-    }*/
-    
-    /* //se criptografar ou descriptografar
-    int caracteres_encrypt = 7;
-    if(strlen(argv[1]) == caracteres_encrypt)
-    {     
-        char *key = chave();
-        printf("Sua chave é %s\n", key);
+            //pegar texto que vai ser criptografado
+            printf("Digite o texto: ");
+            char *texto = get_string();
 
-        //pegar texto que vai ser criptografado
-        printf("Digite o texto: ");
-        char *texto = get_string();
+            //printf("seu texto é: %s \n", texto);
+            printf("seu texto criptografado é: %s\n", criptografia_substituicao (key, texto));
 
-        //printf("seu texto é: %s \n", texto);
-        printf("seu texto criptografado é: %s\n", criptografia_substituicao (key, texto));
+            free(texto);
+            free(key);
+            return 0;
+        }else if(switchHome == 2)
+        {
+            //pedir chave
+            printf("Qual sua chave: ");
+            char *key = get_key();
+            
+            //pedir texto criptografado
+            printf("Digite o texto: ");
+            char *texto_descrypt = get_string();
 
-        free(texto);
-        free(key);
+            //funcao para descriptografar
+            printf("seu texto descriptografado é: %s\n", descriptografar_substituicao(key, texto_descrypt));
+            //retorna texto 
+            free(texto_descrypt);
+            return 0;
+        }
+    }else if(opcaoMenu == 2){
         return 0;
-    }else
-    {
-        //pedir chave
-        printf("Qual sua chave: ");
-        char *key = get_key();
-        
-        //pedir texto criptografado
-        printf("Digite o texto: ");
-        char *texto_descrypt = get_string();
-
-        //funcao para descriptografar
-        printf("seu texto descriptografado é: %s\n", descriptografar_substituicao(key, texto_descrypt));
-        //retorna texto 
-        free(texto_descrypt);
-        return 0;
-    }*/
+    }
 }
-
