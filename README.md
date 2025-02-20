@@ -10,7 +10,8 @@ Após fazer login, você poderá escolher entre duas opções: **Criptografar** 
 **Criptografar**: Será gerada uma chave aleatória de 26 caracteres. Essa chave será necessária para descriptografar seu texto posteriormente.
 
 **Descriptografar**: Você precisará informar a chave e o texto criptografado para que ele seja decifrado corretamente.
---
+
+---
 ## 🧠 **Algoritmo**
 O algoritmo utilizado é baseado na cifra de substituição, um método clássico de criptografia em que cada caractere do texto original é substituído por outro, de acordo com uma chave predefinida.
 
