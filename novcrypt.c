@@ -17,6 +17,8 @@ char *chave(void)
     //cria um caractere nulo no fim da string
     chave[TAMANHO_ALFABETO + 1] = '\0';
     return chave;
+    // uma const de 0 a 25 funcao que seleciona aleatoriamente um desses
+    // verificacao para nao 
 }
 
 char* get_string(void)
