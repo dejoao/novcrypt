@@ -5,7 +5,7 @@ Software de linha de comando com ferramentas para criptografar e descriptografar
 ## 📖 **Manual**
 Após fazer login, você poderá escolher entre duas opções: **Criptografar** ou **Descriptografar**.
 
-![Print do projeto](https://raw.githubusercontent.com/dejoao/novcrypt/main/src/print2.png)
+![Print do projeto](https://raw.githubusercontent.com/dejoao/novcrypt/main/src/print.png)
 
 **Criptografar**: Será gerada uma chave aleatória de 26 caracteres. Essa chave será necessária para descriptografar seu texto posteriormente.
 
