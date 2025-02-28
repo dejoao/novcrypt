@@ -11,6 +11,7 @@
 
 #define HASH_SIZE crypto_pwhash_STRBYTES
 #define TAMANHO_ALFABETO 26
+#define MIN 1
 
 //PROTOTIPOS
 char *criptografia_substituicao (char *key, char *texto);
