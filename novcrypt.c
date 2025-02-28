@@ -114,7 +114,7 @@ int home(void)
 {
     int opcao;
     printf("\nESCOLHA OPÇÃO\n");
-    printf("\n1. Criptografar\n2. Descriptografar\n\n");
+    printf("\n[1] Criptografar\n[2] Descriptografar\n\n");
     scanf("%d", &opcao);
 
     switch (opcao){

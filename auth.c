@@ -175,7 +175,7 @@ int menu(void){
     printf("* ## ####  ##   ##   ## ##   ##        ## ##      ##     ##         ## *\n");
     printf("* ##  ###  ### ###    ###     ##  ##   ## ##      ##     ##         ## *\n");
     printf("* ##   ##   #####     ###      ####   #### ##    ####   ####       #### *\n");
-    printf("\n1. Login\n2. Cadastro\n3. Sair\n\n");
+    printf("\n[1] Login\n[2] Cadastro\n[3] Sair\n\n");
     scanf("%d", &opcao);
 
     switch (opcao){

@@ -36,6 +36,6 @@ O algoritmo utilizado é o Argon2id por meio da biblioteca libsodium. Ele transf
 A função `crypto_pwhash_str()` aplica esse algoritmo com limites de memória e operações pré-definidos para equilibrar segurança e desempenho.
 ***
 ## 🧰 **Funções** 
-1. Autenticação
+Autenticação 
 2. Interface
 3. Banco de dados
