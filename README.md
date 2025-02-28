@@ -1,5 +1,5 @@
 # **novcrypt**
-Software de linha de comando com ferramentas para criptografar e descriptografar textos.
+Software de linha de comando desenvolvido como projeto final do curso CS50x. Ele oferece ferramentas para criptografar e descriptografar textos, garantindo a segurança e a integridade das informações.
 
 ---
 ## 📖 **Manual**
